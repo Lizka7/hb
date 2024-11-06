@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surprise!</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+      }
+      .surprise-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 1;
+      }
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 2;
+      }
+      .birthday-text {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Gloria Hallelujah', cursive;
+        font-size: 5rem;
+        font-weight: bold;
+        color: #fff;
+        background: linear-gradient(to right, #0088ff, #00aaff);
+        -webkit-background-clip: text;
+        color: transparent;
+        text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+        z-index: 3;
+        animation: slideIn 2s ease-out, bounce 1s ease-in-out infinite;
+      }
+
+      @keyframes slideIn {
+        0% {
+          transform: translateX(-50%) translateY(100px);
+        }
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(-20px);
+        }
+      }
+
+      /* Gift Image Link */
+      .gift-link {
+        position: absolute;
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        z-index: 4;
+      }
+
+      .gift-link img {
+        width: 250px;  /* Default width */
+        height: 250px; /* Default height */
+        margin-left: 20px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .gift-link img:hover {
+        transform: scale(1.1);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .birthday-text {
+          font-size: 3rem; /* Smaller text on smaller screens */
+          bottom: 5%;
+        }
+
+        .gift-link img {
+          width: 200px; /* Smaller gift image on mobile */
+          height: 200px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .birthday-text {
+          font-size: 2rem; /* Even smaller text on very small screens */
+        }
+
+        .gift-link img {
+          width: 150px; /* Further reduce the gift image size */
+          height: 150px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <img src="1.jpg" class="surprise-image" alt="Surprise Image" />
+    <canvas id="confettiCanvas"></canvas>
+    <audio id="backgroundMusic" loop>
+      <source src="2.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <!-- Animated Birthday Text -->
+    <div class="birthday-text">С Днём Рождения!</div>
+
+    <!-- Gift Image Link -->
+    <a class="gift-link" href="https://example.com" target="_blank">
+      <span>&#127873;</span>
+    </a>
+
+    <script>
+      const confettiCanvas = document.getElementById("confettiCanvas");
+      const backgroundMusic = document.getElementById("backgroundMusic");
+
+      // Play audio after user clicks anywhere on the page
+      window.addEventListener("click", () => {
+        backgroundMusic.play().catch(err => {
+          console.log("Audio playback failed:", err);
+        });
+      });
+
+      const showConfetti = () => {
+        let W = window.innerWidth;
+        let H = window.innerHeight;
+        const context = confettiCanvas.getContext("2d");
+        const particles = [];
+        const particleCount = 150;
+
+        for (let i = 0; i < particleCount; i++) {
+          particles.push({
+            x: Math.random() * W,
+            y: Math.random() * H - H,
+            r: Math.random() * 10 + 5,
+            d: Math.random() * particleCount,
+            color: randomColor(),
+          });
+        }
+
+        function randomColor() {
+          const colors = [
+            "DodgerBlue", "OliveDrab", "Gold", "Pink", "SlateBlue",
+            "LightBlue", "Gold", "Violet", "PaleGreen", "SteelBlue",
+            "SandyBrown", "Chocolate", "Crimson"
+          ];
+          return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function draw() {
+          context.clearRect(0, 0, W, H);
+
+          particles.forEach((particle) => {
+            context.beginPath();
+            context.fillStyle = particle.color;
+            context.moveTo(particle.x, particle.y);
+            context.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2, true);
+            context.fill();
+
+            particle.y += 3;
+
+            if (particle.y > H) {
+              particle.x = Math.random() * W;
+              particle.y = -10;
+            }
+          });
+
+          requestAnimationFrame(draw);
+        }
+
+        confettiCanvas.width = W;
+        confettiCanvas.height = H;
+        draw();
+      };
+
+      // Start the confetti animation on page load
+      showConfetti();
+    </script>
+  </body>
+</html>
